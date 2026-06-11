@@ -19,3 +19,8 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Downloaded reference material
+heat-pump-tutorial/
+marketlib/
+oemof-examples/
