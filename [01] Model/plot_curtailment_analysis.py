@@ -232,8 +232,8 @@ fig_combo.savefig(output, bbox_inches="tight")
 print(f"Saved: {output}")
 
 
-'''fig_combo, ax_left = plt.subplots(figsize=(8, 5))
-ax_right = ax_left.twinx()
+# ── FIGURE 1+3 combined: Storage installed (stacked fill) + utilisation lines ─
+fig_combo, (ax_top, ax_bottom) = plt.subplots(2, 1, figsize=(8, 8), sharex=True)
 
 x = df[x_col]
 
@@ -249,66 +249,58 @@ stack_colors = {
     "Battery":         "purple",
     "Thermal Storage": "y",
 }
+component_markers = {
+    "Salt Cavern":     "s",
+    "Battery":         "o",
+    "Thermal Storage": "^",
+}
 
-# Maps display names (used in stack_order) → keys in storage_styles
+# Maps display names (used in stack_order) → keys in storage_styles/utilisation_cols
 style_keys = {
     "Salt Cavern":     "Salt Cavern",
     "Battery":         "Battery",
     "Thermal Storage": "Thermal",
 }
 
+# --- Top Subfigure: Capacity Fills ---
 bottom = pd.Series(0.0, index=df.index)
 for label in stack_order:
     col  = stack_cols[label]
     vals = df[col] / 1e3  # MWh → GWh
     top  = bottom + vals
-    ax_left.fill_between(x, bottom, top,
+    ax_top.fill_between(x, bottom, top,
                          color=stack_colors[label],
-                         alpha=0.4, linewidth=0)
+                         alpha=0.4, linewidth=0, label=label)
     bottom = top
 
-ax_left.set_xlabel(r"Curtailment Share / [-]")
-ax_left.set_ylabel(r"Storage Capacity / [GWh]")
+ax_top.set_ylabel(r"Storage Capacity / [GWh]")
+ax_top.set_ylim(bottom=0)
+ax_top.legend(fontsize=9, title_fontsize=10, loc="upper right")
+ax_top.text(-0.08, 1.02, "(a)", transform=ax_top.transAxes,
+             fontsize=11, fontweight="bold", va="bottom", ha="left")
 
-# Utilisation lines on the right axis
-for label, col in utilisation_cols.items():
-    s = storage_styles[label]
-    ax_right.plot(x, df[col],
-                  marker=s["marker"], color=s["color"],
-                  linestyle="--", linewidth=1.5, markersize=4)
-
-ax_right.set_ylabel(r"Storage Utilisation / [-]")
-ax_right.set_ylim(0, 1)
-ax_left.set_ylim(bottom=0)
-
-# ── Single condensed legend: patch + dashed line per row ─────────────────────
-combined_handles = []
+# --- Bottom Subfigure: Utilisation Lines (Ordered to match Top Subfigure) ---
 for label in stack_order:
-    color  = stack_colors[label]
-    marker = storage_styles[style_keys[label]]["marker"]
-    patch  = mpatches.Patch(facecolor=color, alpha=0.4, linewidth=0)
-    line   = mlines.Line2D([], [], color=color, marker=marker,
-                           linestyle="--", linewidth=1.5, markersize=4)
-    combined_handles.append((patch, line))
-
-ax_left.legend(
-    combined_handles,
-    stack_order,
-    handler_map={tuple: HandlerTuple(ndivide=None, pad=0.5)},
-    title="fill = capacity [GWh]  |  line = utilisation [-]",
-    title_fontsize=8,
-    fontsize=9,
-    loc="upper right",
-    frameon=False,
-)
+    key = style_keys[label]          # e.g., "Thermal Storage" -> "Thermal"
+    col = utilisation_cols[key]      # Gets the correct column name
+    s = storage_styles[key]          # Gets the correct marker/color style
+    ax_bottom.plot(x, df[col],
+                  marker=s["marker"], color=s["color"],
+                  linestyle="--", linewidth=1.5, markersize=4, label=label)
+    
+ax_bottom.set_xlabel(r"Curtailment Share / [-]")
+ax_bottom.set_ylabel(r"Average SOC / [-]")
+ax_bottom.set_ylim(0, 1)
+ax_bottom.legend(fontsize=9, title_fontsize=10, loc="upper right")
+ax_bottom.text(-0.08, 1.02, "(b)", transform=ax_bottom.transAxes,
+             fontsize=11, fontweight="bold", va="bottom", ha="left")
 
 fig_combo.tight_layout()
 
-output = Path(__file__).parent.parent / "[03] Figures" / "Curtailment" / "CURTAILMENT_STORAGE_COMBINED.pdf"
+output = Path(__file__).parent.parent / "[03] Figures" / "Curtailment" / "CURTAILMENT_STORAGE_COMBINED_NEW.pdf"
 output.parent.mkdir(parents=True, exist_ok=True)
 fig_combo.savefig(output, bbox_inches="tight")
-print(f"Saved: {output}")'''
-
+print(f"Saved: {output}")
 
 # ── FIGURE 4: Storage costs by component vs curtailment share ─────────────────
 
