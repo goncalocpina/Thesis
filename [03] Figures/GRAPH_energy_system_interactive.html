@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 700px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#378ADD", "id": "electricity", "label": "electricity", "physics": false, "shape": "dot", "size": 10, "title": "Bus", "x": 98.77259922114894, "y": -50.34368753196998}, {"color": "#1D9E75", "id": "electrolyser", "label": "electrolyser", "physics": false, "shape": "dot", "size": 10, "title": "Ptx", "x": 81.39541106752961, "y": 81.453414840394}, {"color": "#1D9E75", "id": "heatpump", "label": "heatpump", "physics": false, "shape": "dot", "size": 10, "title": "Ptx", "x": 300.0, "y": 25.92406667681979}, {"color": "#7F77DD", "id": "battery", "label": "battery", "physics": false, "shape": "dot", "size": 10, "title": "Storage", "x": 31.16582557591022, "y": -111.74591688639055}, {"color": "#D85A30", "id": "Electricity_demand", "label": "Electricity_demand", "physics": false, "shape": "dot", "size": 10, "title": "Demand", "x": 132.98161357308953, "y": -287.543325540469}, {"color": "#E24B4A", "id": "electricity_curtailement", "label": "electricity_curtailement", "physics": false, "shape": "dot", "size": 10, "title": "Curtailment", "x": -89.79581483228088, "y": -300.0}, {"color": "#378ADD", "id": "hydrogen", "label": "hydrogen", "physics": false, "shape": "dot", "size": 10, "title": "Bus", "x": -43.63769863714617, "y": 94.57094702365504}, {"color": "#1D9E75", "id": "chp", "label": "chp", "physics": false, "shape": "dot", "size": 10, "title": "Ptx", "x": 187.4941810813117, "y": -37.27909232486621}, {"color": "#7F77DD", "id": "saltcavern", "label": "saltcavern", "physics": false, "shape": "dot", "size": 10, "title": "Storage", "x": -121.9540458605943, "y": 140.02463212382654}, {"color": "#D85A30", "id": "H2_demand", "label": "H2_demand", "physics": false, "shape": "dot", "size": 10, "title": "Demand", "x": -117.42035728506636, "y": 300.0}, {"color": "#E24B4A", "id": "H2_curtailement", "label": "H2_curtailement", "physics": false, "shape": "dot", "size": 10, "title": "Curtailment", "x": -300.0, "y": 119.72904239391596}, {"color": "#378ADD", "id": "heat", "label": "heat", "physics": false, "shape": "dot", "size": 10, "title": "Bus", "x": 184.10551767621638, "y": 56.21960646117421}, {"color": "#7F77DD", "id": "thermal_storage", "label": "thermal_storage", "physics": false, "shape": "dot", "size": 10, "title": "Storage", "x": 258.0207436806704, "y": 109.10303685806386}, {"color": "#D85A30", "id": "Heat_demand", "label": "Heat_demand", "physics": false, "shape": "dot", "size": 10, "title": "Demand", "x": 191.18746391659545, "y": 203.3843285085499}, {"color": "#E24B4A", "id": "heat_curtailement", "label": "heat_curtailement", "physics": false, "shape": "dot", "size": 10, "title": "Curtailment", "x": 272.77321735643227, "y": -105.17567924671579}, {"color": "#639922", "id": "pv", "label": "pv", "physics": false, "shape": "dot", "size": 10, "title": "Supply", "x": 47.75121940528368, "y": -203.69460300817428}, {"color": "#639922", "id": "wind", "label": "wind", "physics": false, "shape": "dot", "size": 10, "title": "Supply", "x": 133.77881916805882, "y": -156.1920394298623}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "electricity", "to": "electrolyser", "width": 1}, {"arrows": "to", "from": "electricity", "to": "heatpump", "width": 1}, {"arrows": "to", "from": "electricity", "to": "battery", "width": 1}, {"arrows": "to", "from": "electricity", "to": "Electricity_demand", "width": "1.00"}, {"arrows": "to", "from": "electricity", "to": "electricity_curtailement", "width": 1}, {"arrows": "to", "from": "hydrogen", "to": "chp", "width": 1}, {"arrows": "to", "from": "hydrogen", "to": "saltcavern", "width": 1}, {"arrows": "to", "from": "hydrogen", "to": "H2_demand", "width": "1.00"}, {"arrows": "to", "from": "hydrogen", "to": "H2_curtailement", "width": 1}, {"arrows": "to", "from": "heat", "to": "thermal_storage", "width": 1}, {"arrows": "to", "from": "heat", "to": "Heat_demand", "width": "1.00"}, {"arrows": "to", "from": "heat", "to": "heat_curtailement", "width": 1}, {"arrows": "to", "from": "pv", "to": "electricity", "width": 1}, {"arrows": "to", "from": "wind", "to": "electricity", "width": 1}, {"arrows": "to", "from": "electrolyser", "to": "hydrogen", "width": 1}, {"arrows": "to", "from": "electrolyser", "to": "heat", "width": 1}, {"arrows": "to", "from": "chp", "to": "electricity", "width": 1}, {"arrows": "to", "from": "chp", "to": "heat", "width": 1}, {"arrows": "to", "from": "heatpump", "to": "heat", "width": 1}, {"arrows": "to", "from": "battery", "to": "electricity", "width": 1}, {"arrows": "to", "from": "saltcavern", "to": "hydrogen", "width": 1}, {"arrows": "to", "from": "thermal_storage", "to": "heat", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"enabled": false}, "nodes": {"font": {"size": 14}}, "edges": {"arrows": {"to": {"enabled": true, "scaleFactor": 0.6}}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

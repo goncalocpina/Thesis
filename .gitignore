@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore the custom oemof virtual environment
+venv_oemof/
+
+# Environments (Where your oemof packages actually live)
+.venv/
+venv/
+ENV/
+env/
+
+# oemof specific & solver logs
+*.log
+*.lp
+*.sol
+
+# Large data files (Optional: Use this if you don't want your CSVs on GitHub at all)
+outputs/
+*.csv
